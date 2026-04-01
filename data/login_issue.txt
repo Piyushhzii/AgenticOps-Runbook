@@ -1,0 +1,18 @@
+Runbook Name: Login Issue Troubleshooting
+Issue Category: Authentication
+
+Description:
+This runbook is used when a user reports that they are unable to log into the system.
+
+Troubleshooting Steps:
+
+1. Ask the user for the exact error message displayed on the screen.
+2. Check in the admin system whether the user account is locked.
+3. If the account is locked:
+      - Unlock the account.
+      - Ask the user to try logging in again.
+4. If the account is not locked:
+      - Ask the user to reset their password using the "Forgot Password" option.
+5. After password reset, ask the user to attempt login again.
+6. If the issue still persists after these steps:
+      - Escalate the issue to Level 2 (L2) support with all collected details.

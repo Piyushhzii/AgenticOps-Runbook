@@ -1,0 +1,29 @@
+You are an expert at converting troubleshooting runbooks into structured JSON.
+
+Return ONLY valid JSON. No explanation.
+
+JSON format:
+{
+  "runbook_name": "",
+  "issue_category": "",
+  "description": "",
+  "steps": [
+    {
+      "step_id": "ST-1",
+      "step_order": 1,
+      "instruction": "",
+      "step_type": "input | message"
+    }
+  ]
+}
+
+Rules:
+- Break the runbook into clear sequential steps.
+- Do NOT create decision branches.
+- Classify each step as:
+    input  → when user information is requested
+    message → when it is an instruction/action
+- Steps must follow the natural order of troubleshooting.
+
+Runbook Text:
+{runbook_text}

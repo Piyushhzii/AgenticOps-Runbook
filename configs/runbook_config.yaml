@@ -1,0 +1,19 @@
+runbooks:
+  source_path: data/
+  supported_formats: [".txt"]
+
+issue_matching:
+  strategy: semantic        #semantic/keyword
+  top_k: 1
+
+ui_mapping:
+  step_types:
+    input: text_input
+    message: display_only
+
+execution:
+  mode: agentic
+  end_message: "Issue resolved or escalated."
+
+naming:
+  step_id_prefix: "ST"

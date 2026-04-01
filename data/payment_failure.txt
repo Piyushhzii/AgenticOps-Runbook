@@ -1,0 +1,17 @@
+Runbook Name: Payment Failure Troubleshooting
+Issue Category: Payments
+
+Description:
+This runbook is used when a user reports that their payment has failed or money has been deducted but the service/order is not confirmed.
+
+Troubleshooting Steps:
+
+1. Ask the user for the transaction ID or payment reference number.
+2. Check the payment status using the payment gateway API or admin dashboard.
+3. If the payment status is "Pending":
+      - Inform the user to wait for 10 minutes and do not retry immediately.
+4. If the payment status is "Failed":
+      - Ask the user to retry the payment.
+5. If the payment status is "Success" but the order/service is not created:
+      - Escalate the issue to the support team with transaction details.
+6. Document all findings before escalation.

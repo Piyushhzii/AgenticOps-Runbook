@@ -1,0 +1,20 @@
+database:
+  name: runbook.db
+
+tables:
+  master: runbook_master
+  steps: runbook_steps
+
+columns:
+  master:
+    - runbook_id
+    - runbook_name
+    - issue_category
+    - description
+
+  steps:
+    - step_id
+    - runbook_id
+    - step_order
+    - instruction
+    - step_type

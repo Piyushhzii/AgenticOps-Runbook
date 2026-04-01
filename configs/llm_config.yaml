@@ -1,0 +1,9 @@
+llm:
+  provider: groq
+  model: openai/gpt-oss-120b
+  temperature: 0
+
+prompts:
+  runbook_extraction: prompts/runbook_prompt.txt
+  step_reasoning: prompts/step_reasoning_prompt.txt
+  runbook_selection: prompts/runbook_selector_prompt.txt
