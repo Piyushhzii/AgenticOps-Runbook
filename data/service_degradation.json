@@ -1,0 +1,52 @@
+{
+  "runbook_name": "Service Degradation Triage",
+  "issue_category": "Availability",
+  "description": "Investigate elevated latency or error rates using operator-reported monitoring evidence; escalate unclear or persistent incidents.",
+  "facts": [
+    {
+      "name": "affected_scope",
+      "description": "Affected service, environment, incident start time and customer impact"
+    },
+    {
+      "name": "monitoring_status",
+      "description": "Operator-observed monitoring state: healthy (metrics within thresholds, no breached alerts) or degraded",
+      "options": ["healthy", "degraded"]
+    },
+    {
+      "name": "recovered",
+      "description": "Whether service health stayed stable and all alerts cleared during the observation window",
+      "options": ["yes", "no"]
+    }
+  ],
+  "steps": [
+    {
+      "step_id": "scope",
+      "step_order": 1,
+      "instruction": "Which service and environment are affected? Provide the incident start time and customer impact. Do not include secrets.",
+      "step_type": "input",
+      "collects": "affected_scope"
+    },
+    {
+      "step_id": "observe",
+      "step_order": 2,
+      "instruction": "As an authorized operator, inspect the monitoring dashboard. Report current error rate, p95 latency, observation time, and whether an alert threshold is breached. Do not restart or modify services.",
+      "step_type": "message",
+      "collects": "monitoring_status",
+      "routes": [
+        { "when": { "monitoring_status": "healthy" }, "to": "verify" },
+        { "to": "ESCALATE" }
+      ]
+    },
+    {
+      "step_id": "verify",
+      "step_order": 3,
+      "instruction": "Observe for the normal monitoring window and report whether service health is stable and all alerts have cleared. If not, report the remaining impact.",
+      "step_type": "input",
+      "collects": "recovered",
+      "routes": [
+        { "when": { "recovered": "yes" }, "to": "END" },
+        { "to": "ESCALATE" }
+      ]
+    }
+  ]
+}

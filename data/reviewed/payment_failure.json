@@ -1,0 +1,90 @@
+{
+  "runbook_name": "Payment Failure Troubleshooting",
+  "issue_category": "Payments",
+  "description": "Payment failed, is stuck pending, or money was deducted but the order/service was not created. Diagnoses from operator-observed gateway status; never charges or refunds automatically.",
+  "facts": [
+    {
+      "name": "transaction_ref",
+      "description": "Transaction ID or payment reference number (never a full card number)"
+    },
+    {
+      "name": "payment_status",
+      "description": "Operator-observed status in the payment gateway or admin dashboard",
+      "options": ["pending", "failed", "success"]
+    },
+    {
+      "name": "payment_completed",
+      "description": "Whether the payment has now completed successfully for the user",
+      "options": ["yes", "no"]
+    },
+    {
+      "name": "order_created",
+      "description": "Operator-observed: whether the order/service exists for this payment",
+      "options": ["yes", "no"]
+    }
+  ],
+  "steps": [
+    {
+      "step_id": "ask_reference",
+      "step_order": 1,
+      "instruction": "Ask the user for the transaction ID or payment reference number. Never ask for full card details.",
+      "step_type": "input",
+      "collects": "transaction_ref"
+    },
+    {
+      "step_id": "check_status",
+      "step_order": 2,
+      "instruction": "Check the payment status for this reference in the payment gateway or admin dashboard.",
+      "step_type": "message",
+      "collects": "payment_status",
+      "routes": [
+        { "when": { "payment_status": "pending" }, "to": "wait_pending" },
+        { "when": { "payment_status": "failed" }, "to": "retry_payment" },
+        { "when": { "payment_status": "success" }, "to": "check_order" },
+        { "to": "ESCALATE" }
+      ]
+    },
+    {
+      "step_id": "wait_pending",
+      "step_order": 3,
+      "instruction": "Tell the user the payment is still pending: wait 10 minutes and do not retry yet. Then ask whether the payment has completed.",
+      "step_type": "input",
+      "collects": "payment_completed",
+      "routes": [
+        { "when": { "payment_completed": "yes" }, "to": "END" },
+        { "to": "document" }
+      ]
+    },
+    {
+      "step_id": "retry_payment",
+      "step_order": 4,
+      "instruction": "Tell the user the payment failed and no money should have been taken. Ask them to retry the payment once and confirm whether it succeeded.",
+      "step_type": "input",
+      "collects": "payment_completed",
+      "routes": [
+        { "when": { "payment_completed": "yes" }, "to": "END" },
+        { "to": "document" }
+      ]
+    },
+    {
+      "step_id": "check_order",
+      "step_order": 5,
+      "instruction": "The payment succeeded. Check whether the order/service was created for this payment.",
+      "step_type": "message",
+      "collects": "order_created",
+      "routes": [
+        { "when": { "order_created": "yes" }, "to": "END" },
+        { "to": "document" }
+      ]
+    },
+    {
+      "step_id": "document",
+      "step_order": 6,
+      "instruction": "Document the transaction reference, gateway status, order status and timestamps for the escalation.",
+      "step_type": "message",
+      "routes": [
+        { "to": "ESCALATE" }
+      ]
+    }
+  ]
+}

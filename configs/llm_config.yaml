@@ -7,3 +7,5 @@ prompts:
   runbook_extraction: prompts/runbook_prompt.txt
   step_reasoning: prompts/step_reasoning_prompt.txt
   runbook_selection: prompts/runbook_selector_prompt.txt
+  support_response: prompts/support_response_prompt.txt
+  fact_extraction: prompts/fact_extraction_prompt.txt

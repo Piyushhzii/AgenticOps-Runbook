@@ -7,6 +7,20 @@
 # Python cache
 __pycache__/
 *.pyc
+.pytest_cache/
+.coverage
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
 
 # Virtual environment
 venv/
+.venv/
+
+# Frontend
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+frontend/.env*

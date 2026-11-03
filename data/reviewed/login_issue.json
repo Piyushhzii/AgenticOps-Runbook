@@ -1,0 +1,95 @@
+{
+  "runbook_name": "Login Issue Troubleshooting",
+  "issue_category": "Authentication",
+  "description": "User cannot log in: wrong or forgotten password, locked account, MFA/one-time code problems, or an unknown login error. Diagnoses the cause from the error, guides self-service fixes, and hands account checks to an operator.",
+  "facts": [
+    {
+      "name": "error_type",
+      "description": "What the login error indicates",
+      "options": ["wrong_password", "account_locked", "mfa_code", "other"]
+    },
+    {
+      "name": "account_locked",
+      "description": "Operator-confirmed lock status of the account in the admin system",
+      "options": ["yes", "no"]
+    },
+    {
+      "name": "reset_done",
+      "description": "Whether the user completed a password reset via Forgot Password",
+      "options": ["yes", "no"]
+    },
+    {
+      "name": "login_works",
+      "description": "Whether the user can now log in successfully",
+      "options": ["yes", "no"]
+    }
+  ],
+  "steps": [
+    {
+      "step_id": "ask_error",
+      "step_order": 1,
+      "instruction": "Ask the user for the exact error message shown when they try to log in. Never ask for the password.",
+      "step_type": "input",
+      "collects": "error_type",
+      "routes": [
+        { "when": { "error_type": "wrong_password" }, "to": "reset_password" },
+        { "when": { "error_type": "mfa_code" }, "to": "mfa_recovery" },
+        { "to": "check_lock" }
+      ]
+    },
+    {
+      "step_id": "check_lock",
+      "step_order": 2,
+      "instruction": "Check in the admin system whether the user account is locked.",
+      "step_type": "message",
+      "collects": "account_locked",
+      "routes": [
+        { "when": { "account_locked": "yes" }, "to": "unlock" },
+        { "when": { "account_locked": "no" }, "to": "reset_password" },
+        { "to": "ESCALATE" }
+      ]
+    },
+    {
+      "step_id": "unlock",
+      "step_order": 3,
+      "instruction": "Unlock the account in the admin system following the approved procedure, then confirm it is unlocked.",
+      "step_type": "message",
+      "routes": [
+        { "to": "verify_login" }
+      ]
+    },
+    {
+      "step_id": "reset_password",
+      "step_order": 4,
+      "instruction": "Ask the user to reset their password using the 'Forgot Password' link on the login page and tell us once the reset is complete.",
+      "step_type": "input",
+      "collects": "reset_done",
+      "routes": [
+        { "when": { "reset_done": "yes" }, "to": "verify_login" },
+        { "to": "ESCALATE" }
+      ]
+    },
+    {
+      "step_id": "mfa_recovery",
+      "step_order": 5,
+      "instruction": "Ask the user to check that their phone's time is set automatically, then try a fresh authenticator code or a backup code, and confirm whether they can log in.",
+      "step_type": "input",
+      "collects": "login_works",
+      "routes": [
+        { "when": { "login_works": "yes" }, "to": "END" },
+        { "to": "ESCALATE" }
+      ]
+    },
+    {
+      "step_id": "verify_login",
+      "step_order": 6,
+      "instruction": "Ask the user to try logging in again and confirm whether it works.",
+      "step_type": "input",
+      "collects": "login_works",
+      "routes": [
+        { "when": { "login_works": "yes" }, "to": "END" },
+        { "to": "ESCALATE" }
+      ]
+    }
+  ]
+}
