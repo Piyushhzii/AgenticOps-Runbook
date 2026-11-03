@@ -475,5 +475,6 @@ class ConditionalRunbookTest(IsolatedDatabaseTest):
             self.assertEqual(state["version"], 1)
 
 
+
 if __name__ == "__main__":
     unittest.main()
